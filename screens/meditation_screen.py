@@ -5,7 +5,9 @@ from kivy.uix.screenmanager import Screen
 class MeditationScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.breathing = BreathingController(on_text_change=self._on_breathing_text)
+        self.breathing = BreathingController(
+            on_text_change=self._on_breathing_text
+        )
 
     def _on_breathing_text(self, text):
         # ids доступны только после построения дерева из KV
@@ -18,8 +20,8 @@ class BreathingController:
     Контроллер дыхательных упражнений: вдох 4 сек, выдох 6 сек.
     """
 
-    INHALE_DURATION = 4.0   # секунды
-    EXHALE_DURATION = 6.0   # секунды
+    INHALE_DURATION = 4.0  # секунды
+    EXHALE_DURATION = 6.0  # секунды
 
     def __init__(self, on_text_change=None):
         self._running = False
@@ -30,16 +32,14 @@ class BreathingController:
         """Вдох на 4 секунды. Запускает таймер и обновляет текст."""
         self.change_text("Вдох")
         self._clock_event = Clock.schedule_once(
-            lambda dt: self._on_inhale_done(),
-            self.INHALE_DURATION
+            lambda dt: self._on_inhale_done(), self.INHALE_DURATION
         )
 
     def exhale(self):
         """Выдох на 6 секунд. Запускает таймер и обновляет текст."""
         self.change_text("Выдох")
         self._clock_event = Clock.schedule_once(
-            lambda dt: self._on_exhale_done(),
-            self.EXHALE_DURATION
+            lambda dt: self._on_exhale_done(), self.EXHALE_DURATION
         )
 
     def _on_inhale_done(self):
