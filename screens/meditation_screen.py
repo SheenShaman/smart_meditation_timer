@@ -26,7 +26,7 @@ class BreathingController:
         self._clock_event = None
         self._on_text_change = on_text_change  # callback для смены текста
 
-    def vdoh(self):
+    def inhale(self):
         """Вдох на 4 секунды. Запускает таймер и обновляет текст."""
         self.change_text("Вдох")
         self._clock_event = Clock.schedule_once(
@@ -34,7 +34,7 @@ class BreathingController:
             self.INHALE_DURATION
         )
 
-    def vydoch(self):
+    def exhale(self):
         """Выдох на 6 секунд. Запускает таймер и обновляет текст."""
         self.change_text("Выдох")
         self._clock_event = Clock.schedule_once(
@@ -44,11 +44,11 @@ class BreathingController:
 
     def _on_inhale_done(self):
         if self._running:
-            self.vydoch()
+            self.exhale()
 
     def _on_exhale_done(self):
         if self._running:
-            self.vdoh()
+            self.inhale()
 
     def stop_breathing(self):
         """Останавливает цикл дыхания."""
@@ -66,4 +66,4 @@ class BreathingController:
     def infinity_repeating(self):
         """Запускает бесконечный цикл: вдох → выдох → вдох → ..."""
         self._running = True
-        self.vdoh()  # начинаем с вдоха
+        self.inhale()  # начинаем с вдоха
