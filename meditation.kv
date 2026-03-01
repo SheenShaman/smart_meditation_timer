@@ -1,4 +1,4 @@
-RootManager:
+<RootManager>:
     MeditationScreen:
         name: "meditation"
     StatsScreen:
@@ -7,7 +7,37 @@ RootManager:
         name: "settings"
 
 <MeditationScreen>:
+    # фон экрана
+    canvas.before:
+        Color:
+            rgba: app.theme.background
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
     BoxLayout:
+        orientation: "vertical"
+        padding: 20
+        spacing: 20
+
         Label:
             id: breathing_label
             text: "МЕДИТАЦИЯ"
+            font_size: 32
+            color: app.theme.primary
+
+        Button:
+            text: "Статистика"
+            background_normal: ""
+            background_color: app.theme.primary
+            color: app.theme.text
+            height: 50
+            on_press: app.root.switch("stats")
+
+        Button:
+            text: "Настройки"
+            background_normal: ""
+            background_color: app.theme.primary
+            color: app.theme.text
+            height: 50
+            on_press: app.root.switch("settings")
