@@ -1,3 +1,5 @@
+ #:import dp kivy.metrics.dp
+
 <RootManager>:
     MeditationScreen:
         name: "meditation"
@@ -46,11 +48,38 @@
                     id: duration_spinner
                     text: "Свободная"
                     values: root.duration_options
+                    option_cls: "SpinnerOption"
                     size_hint: None, None
                     size: "180dp", "44dp"
-                    on_text: root.on_duration_mode_change(self.text)
+                    background_normal: ""
+                    background_down: ""
+                    background_color: 0, 0, 0, 0
+                    color: app.theme.text
+                    on_text: root.on_duration_mode_change(self.text); root.sounds.play_click()
                     on_release: root.sounds.play_click()
-                    on_text: root.sounds.play_click()
+                    canvas.before:
+                        Color:
+                            rgba: app.theme.glass_primary
+                        RoundedRectangle:
+                            pos: self.pos
+                            size: self.size
+                            radius: [14, 14, 14, 14]
+                        Color:
+                            rgba: app.theme.glass_border
+                        Line:
+                            rounded_rectangle: (self.x, self.y, self.width, self.height, 14)
+                            width: 1.1
+                    canvas.after:
+                        Color:
+                            rgba: app.theme.text
+                        Triangle:
+                            points:
+                                [
+                                self.right - dp(18), self.center_y + dp(4),
+                                self.right - dp(8), self.center_y + dp(4),
+                                self.right - dp(13), self.center_y - dp(3)
+                                ]
+
 
             Label:
                 id: timer_label
@@ -72,9 +101,22 @@
                 size_hint_y: None
                 height: "48dp"
                 background_normal: ""
-                background_color: app.theme.action_primary
+                background_down: ""
+                background_color: 0, 0, 0, 0
                 color: app.theme.text
                 on_press: root.on_play_button_press(self)
+                canvas.before:
+                    Color:
+                        rgba: app.theme.glass_primary
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [14, 14, 14, 14]
+                    Color:
+                        rgba: app.theme.glass_border
+                    Line:
+                        rounded_rectangle: (self.x, self.y, self.width, self.height, 14)
+                        width: 1.1
 
             Button:
                 id: finish_btn
@@ -82,11 +124,24 @@
                 size_hint_y: None
                 height: "48dp"
                 background_normal: ""
-                background_color: app.theme.action_finish
+                background_down: ""
+                background_color: 0, 0, 0, 0
                 color: app.theme.text
                 opacity: 1 if root.show_finish_button else 0
                 disabled: not root.show_finish_button
                 on_press: root.on_finish_button_press()
+                canvas.before:
+                    Color:
+                        rgba: app.theme.glass_finish
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [14, 14, 14, 14]
+                    Color:
+                        rgba: app.theme.glass_border
+                    Line:
+                        rounded_rectangle: (self.x, self.y, self.width, self.height, 14)
+                        width: 1.1
 
         BoxLayout:
             orientation: "horizontal"
@@ -108,3 +163,79 @@
                 background_color: app.theme.primary
                 color: app.theme.text
                 on_press: app.root.switch("settings")
+
+
+<FinishPopup@Popup>:
+    title: ""
+    background: ""
+    background_color: 0, 0, 0, 0
+    separator_height: 0
+    separator_color: 0, 0, 0, 0
+    overlay_color: 0, 0, 0, 0.9
+    size_hint: None, None
+    size: "340dp", "240dp"
+    auto_dismiss: False
+    pos_hint: {"center_x": 0.5, "center_y": 0.5}
+
+    BoxLayout:
+        orientation: "vertical"
+        spacing: "10dp"
+        padding: "16dp"
+        canvas.before:
+            Color:
+                rgba: 0.08, 0.10, 0.14, 0.92
+            RoundedRectangle:
+                pos: self.pos
+                size: self.size
+                radius: [18, 18, 18, 18]
+            Color:
+                rgba: app.theme.glass_border
+            Line:
+                rounded_rectangle: (self.x, self.y, self.width, self.height, 18)
+                width: 1.2
+
+        Label:
+            text: "Медитация завершена"
+            color: app.theme.text
+            font_size: "22sp"
+            size_hint_y: None
+            height: "36dp"
+            halign: "center"
+            valign: "middle"
+            text_size: self.size
+
+        Label:
+            text: "Отличная работа"
+            color: app.theme.text
+            font_size: "16sp"
+            size_hint_y: None
+            height: "26dp"
+            halign: "center"
+            valign: "middle"
+            text_size: self.size
+
+        AnchorLayout:
+            anchor_x: "center"
+            anchor_y: "center"
+
+            Button:
+                text: "Ок"
+                size_hint: None, None
+                size: "140dp", "44dp"
+                background_normal: ""
+                background_down: ""
+                background_color: 0, 0, 0, 0
+                color: app.theme.text
+                on_press: root.dismiss()
+                canvas.before:
+                    Color:
+                        rgba: app.theme.glass_finish
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [12, 12, 12, 12]
+                    Color:
+                        rgba: app.theme.glass_border
+                    Line:
+                        rounded_rectangle: (self.x, self.y, self.width, self.height, 12)
+                        width: 1.0

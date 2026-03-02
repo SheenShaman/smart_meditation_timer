@@ -3,15 +3,9 @@ from kivy.core.audio import Sound, SoundLoader
 
 class Sounds:
     def __init__(self):
-        self.sound_start: Sound | None = SoundLoader.load(
-            "assets/sound_start.mp3"
-        )
-        self.sound_finish: Sound | None = SoundLoader.load(
-            "assets/sound_finish.wav"
-        )
-        self.sound_click: Sound | None = SoundLoader.load(
-            "assets/sound_click.wav"
-        )
+        self.sound_start: Sound | None = SoundLoader.load("assets/sound_start.mp3")
+        self.sound_finish: Sound | None = SoundLoader.load("assets/sound_finish.wav")
+        self.sound_click: Sound | None = SoundLoader.load("assets/sound_click.wav")
 
     def play_start(self):
         if self.sound_start is not None:

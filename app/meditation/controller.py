@@ -13,9 +13,7 @@ class BreathingController:
     INHALE_DURATION = 4.0  # секунды
     EXHALE_DURATION = 6.0  # секунды
 
-    def __init__(
-        self, on_phase_change=None, on_state_change=None, on_timer_tick=None
-    ):
+    def __init__(self, on_phase_change=None, on_state_change=None, on_timer_tick=None):
         self._running = False
         self._clock_event = None
 
@@ -71,10 +69,7 @@ class BreathingController:
         if self._running and self._session_started_at > 0:
             total += time.monotonic() - self._session_started_at
 
-        if (
-            self._duration_limit_sec is not None
-            and total >= self._duration_limit_sec
-        ):
+        if self._duration_limit_sec is not None and total >= self._duration_limit_sec:
             self._on_timer_tick(self._duration_limit_sec)
             Clock.schedule_once(lambda dt: self.stop_breathing(), 0)
             return
@@ -96,9 +91,7 @@ class BreathingController:
 
     def _pause_session_timer(self):
         if self._session_started_at > 0:
-            self._elapsed_before_pause += (
-                time.monotonic() - self._session_started_at
-            )
+            self._elapsed_before_pause += time.monotonic() - self._session_started_at
         self._session_started_at = 0.0
         if self._timer_event:
             self._timer_event.cancel()

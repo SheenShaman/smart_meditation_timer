@@ -1,4 +1,9 @@
+from kivy.factory import Factory
 from kivy.properties import BooleanProperty, ListProperty
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.button import Button
+from kivy.uix.label import Label
+from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import Screen
 
 from app.meditation.controller import BreathingController
@@ -53,6 +58,7 @@ class MeditationScreen(Screen):
             self._apply_paused_state()
         elif state in (SessionState.IDLE, SessionState.STOPPED):
             self._apply_stopped_state()
+            self._show_finish_popup()
             self.sounds.play_finish()
 
     def on_duration_mode_change(self, mode_text: str):
@@ -63,6 +69,9 @@ class MeditationScreen(Screen):
         play_btn = self.ids.get("play_btn")
         if play_btn:
             play_btn.text = "Пауза"
+
+    def _show_finish_popup(self):
+        Factory.FinishPopup().open()
 
     def _apply_paused_state(self):
         circle = self.ids.get("circle")

@@ -10,6 +10,7 @@ from widgets import AnimatedCircle
 
 Config.set("kivy", "log_level", "debug")
 Config.set("graphics", "multisamples", "8")
+Config.set("input", "mouse", "mouse,disable_multitouch")
 
 Factory.register("MeditationScreen", cls=MeditationScreen)
 Factory.register("StatsScreen", cls=StatsScreen)
