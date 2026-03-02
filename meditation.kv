@@ -7,6 +7,7 @@
         name: "settings"
 
 <MeditationScreen>:
+<<<<<<< HEAD
     # фон экрана
     canvas.before:
         Color:
@@ -19,10 +20,25 @@
         orientation: "vertical"
         padding: 20
         spacing: 20
+=======
+    FloatLayout:
+        canvas.before:
+            Rectangle:
+                pos: self.pos
+                size: self.size
+                source: "assets/bg_gradient_dark.jpg"
+
+        AnimatedCircle:
+            id: circle
+            size_hint: None, None
+            size: "220dp", "220dp"
+            pos_hint: {"center_x": 0.5, "center_y": 0.55}
+>>>>>>> d874412 (added animation circle)
 
         Label:
             id: breathing_label
             text: "МЕДИТАЦИЯ"
+<<<<<<< HEAD
             font_size: 32
             color: app.theme.primary
 
@@ -41,3 +57,15 @@
             color: app.theme.text
             height: 50
             on_press: app.root.switch("settings")
+=======
+            size_hint: 1, None
+            height: "40dp"
+            pos_hint: {"center_x": .5, "center_y": .75}
+
+        Button:
+            text: "Начать"
+            size_hint: .8, None
+            height: "48dp"
+            pos_hint: {"center_x": .5, "center_y": 0.3}
+            on_press: root.on_play_button_press(self)
+>>>>>>> d874412 (added animation circle)

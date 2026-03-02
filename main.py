@@ -6,12 +6,18 @@ from kivy.uix.screenmanager import ScreenManager
 
 from core.theme import Theme
 from screens import MeditationScreen, SettingsScreen, StatsScreen
+<<<<<<< HEAD
+=======
+from widgets import AnimatedCircle
+>>>>>>> d874412 (added animation circle)
 
 Config.set("kivy", "log_level", "debug")
+Config.set("graphics", "multisamples", "8")
 
 Factory.register("MeditationScreen", cls=MeditationScreen)
 Factory.register("StatsScreen", cls=StatsScreen)
 Factory.register("SettingsScreen", cls=SettingsScreen)
+Factory.register("AnimatedCircle", cls=AnimatedCircle)
 
 
 class RootManager(ScreenManager):
@@ -39,9 +45,12 @@ class MeditationApp(App):
             "graphics",
             {"width": "400", "height": "600", "maxfps": "60", "resizable": "0"},
         )
+<<<<<<< HEAD
 
     def build(self):
         return RootManager()
+=======
+>>>>>>> d874412 (added animation circle)
 
 
 if __name__ == "__main__":

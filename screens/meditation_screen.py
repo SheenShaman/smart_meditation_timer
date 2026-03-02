@@ -1,10 +1,29 @@
 from kivy.clock import Clock
+from kivy.core.audio import Sound, SoundLoader
+from kivy.uix.button import Button
 from kivy.uix.screenmanager import Screen
+
+
+class Sounds:
+    def __init__(self):
+        self.sound: Sound = (
+            SoundLoader.load("assets/sound.mp3") or Sound()
+        )  # TODO: Добавить fallback
+
+    def play_sound(self):
+        if self.sound is not None:
+            self.sound.play()
+        else:
+            raise ValueError("Звук не был загружен!")
 
 
 class MeditationScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+<<<<<<< HEAD
+=======
+        self.sounds = Sounds()
+>>>>>>> d874412 (added animation circle)
         self.breathing = BreathingController(
             on_text_change=self._on_breathing_text
         )
@@ -13,6 +32,19 @@ class MeditationScreen(Screen):
         # ids доступны только после построения дерева из KV
         if "breathing_label" in self.ids:
             self.ids.breathing_label.text = text
+
+    def play_sound(self):
+        self.sounds.play_sound()
+
+    def on_play_button_press(self, button: Button):
+        if self.sounds.sound is not None:
+            self.sounds.play_sound()
+            if button.text == "Начать":
+                button.text = "Пауза"
+            elif button.text == "Пауза":
+                button.text = "Начать"
+            else:
+                raise ValueError("Неверное состояние кнопки")
 
 
 class BreathingController:
