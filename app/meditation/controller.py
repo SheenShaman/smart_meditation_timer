@@ -1,4 +1,3 @@
-import math
 import time
 
 from kivy.clock import Clock

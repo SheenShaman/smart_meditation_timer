@@ -14,7 +14,7 @@ class AnimatedCircle(Widget):
         super().__init__(**kwargs)
         self.label = Label(text="Вдох", color="black")
         self.label.halign = "center"
-        self.label.bind(
+        self.label.bind(  # pyright: ignore
             size=lambda *_: setattr(self.label, "text_size", self.label.size)
         )
         self.add_widget(self.label)
