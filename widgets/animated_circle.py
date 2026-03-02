@@ -1,4 +1,5 @@
 from kivy.animation import Animation
+from kivy.clock import Clock
 from kivy.graphics import Color, Ellipse, Line
 from kivy.properties import ListProperty, NumericProperty
 from kivy.uix.label import Label
@@ -16,7 +17,6 @@ class AnimatedCircle(Widget):
         self.label.bind(
             size=lambda *_: setattr(self.label, "text_size", self.label.size)
         )
-        self.bind(pos=self._update_label, size=self._update_label)
         self.add_widget(self.label)
         self._update_label()
 
@@ -25,7 +25,7 @@ class AnimatedCircle(Widget):
         with self.canvas.before:
             self._ring_color = Color()
             self._ring = Line(
-                circle=(self.center_x, self.center_y, self.radius), width=2
+                circle=(self.center_x, self.center_y, self.radius), width=1.5
             )
 
             self._color = Color(*self.dot_color)
@@ -34,9 +34,36 @@ class AnimatedCircle(Widget):
         self.bind(  # pyright: ignore
             pos=self._redraw,
             size=self._redraw,
+            center=self._redraw,
             radius=self._redraw,
             dot_color=self._on_color,
         )
+
+        Clock.schedule_once(lambda dt: self._redraw(), 0)
+
+    def animate_inhale(self, duration: float):
+        Animation.cancel_all(self, "radius")
+        animation = Animation(radius=70, duration=duration)
+        animation.bind(on_start=lambda *_: self._set_phase("Вдох"))
+        animation.start(self)
+
+    def animate_exhale(self, duration: float):
+        Animation.cancel_all(self, "radius")
+        animation = Animation(radius=40, duration=duration)
+        animation.bind(on_start=lambda *_: self._set_phase("Выдох"))
+        animation.start(self)
+
+    def pause_animation(self):
+        Animation.cancel_all(self, "radius")
+        self._set_phase("Пауза")
+
+    def stop_animation(self):
+        Animation.cancel_all(self, "radius")
+
+    def reset_animation(self):
+        Animation.cancel_all(self, "radius")
+        self.radius = 40
+        self._set_phase("Вдох")
 
     def _redraw(self, *_):
         d = self.radius * 2
@@ -52,19 +79,6 @@ class AnimatedCircle(Widget):
 
     def _on_color(self, *_):
         self._color.rgba = self.dot_color
-
-    def _start_pulse(self):
-        Animation.cancel_all(self, "radius")
-
-        inhale = Animation(radius=70, duration=1.5)
-        exhale = Animation(radius=40, duration=1.0)
-
-        inhale.bind(on_start=lambda *_: self._set_phase("Вдох"))
-        exhale.bind(on_start=lambda *_: self._set_phase("Выдох"))
-
-        cycle = inhale + exhale
-        cycle.repeat = True
-        cycle.start(self)
 
     def _set_phase(self, text: str):
         self.label.text = text
