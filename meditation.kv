@@ -22,13 +22,22 @@
             size: "220dp", "220dp"
             pos_hint: {"center_x": 0.5, "center_y": 0.55}
 
+        Spinner:
+            id: duration_spinner
+            text: "Свободная"
+            values: root.duration_options
+            size_hint: None, None
+            size: "180dp", "44dp"
+            pos_hint: {"center_x": 0.5, "center_y": 0.82}
+            on_text: root.on_duration_mode_change(self.text)
+
         Label:
             text: "МЕДИТАЦИЯ"
             font_size: 32
             color: app.theme.primary
             size_hint: 1, None
             height: "40dp"
-            pos_hint: {"center_x": 0.5, "center_y": 0.85}
+            pos_hint: {"center_x": 0.5, "center_y": 0.95}
 
         Label:
             id: timer_label

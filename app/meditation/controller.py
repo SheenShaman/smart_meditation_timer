@@ -1,3 +1,4 @@
+import math
 import time
 
 from kivy.clock import Clock
@@ -23,6 +24,10 @@ class BreathingController:
         self._session_started_at: float = 0.0
         self._elapsed_before_pause: float = 0.0
         self._timer_event = None
+        self._duration_limit_sec: int | None = None
+        self._timer_event = None
+        self._last_emitted_sec = -1
+        self._stop_requested = False
 
         self._on_state_change = on_state_change  # callback смены состояния
         self._on_phase_change = on_phase_change  # callback смены фазы
@@ -60,17 +65,33 @@ class BreathingController:
         )
 
     def _emit_timer_tick(self):
-        if self._on_timer_tick:
-            total = self._elapsed_before_pause
-            if self._running and self._session_started_at > 0:
-                total += time.monotonic() - self._session_started_at
-            self._on_timer_tick(int(total))
+        if not self._on_timer_tick:
+            return
+
+        total = self._elapsed_before_pause
+        if self._running and self._session_started_at > 0:
+            total += time.monotonic() - self._session_started_at
+
+        if (
+            self._duration_limit_sec is not None
+            and total >= self._duration_limit_sec
+        ):
+            self._on_timer_tick(self._duration_limit_sec)
+            Clock.schedule_once(lambda dt: self.stop_breathing(), 0)
+            return
+
+        self._on_timer_tick(int(total))
+
+    def set_duration_limit(self, limit_sec: int | None):
+        self._duration_limit_sec = limit_sec
 
     def _start_session_timer(self):
         self._session_started_at = time.monotonic()
+        self._last_emitted_sec = -1
         if self._timer_event is None:
             self._timer_event = Clock.schedule_interval(
-                lambda dt: self._emit_timer_tick(), 1.0
+                lambda dt: self._emit_timer_tick(),
+                0,
             )
         self._emit_timer_tick()
 

@@ -1,13 +1,21 @@
-from kivy.properties import BooleanProperty
+from kivy.properties import BooleanProperty, ListProperty
 from kivy.uix.screenmanager import Screen
 
 from app.meditation.controller import BreathingController
 from app.meditation.states import BreathPhase, SessionState
 from services.sounds import Sounds
 
+DURATION_PRESETS = {
+    "10 сек": 10,
+    "5 мин": 5 * 60,
+    "10 мин": 10 * 60,
+    "Свободная": None,
+}
+
 
 class MeditationScreen(Screen):
     show_finish_button = BooleanProperty(False)
+    duration_options = ListProperty(list(DURATION_PRESETS))
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -40,10 +48,15 @@ class MeditationScreen(Screen):
 
         if state == SessionState.RUNNING:
             self._apply_running_state()
+            self.sounds.play_start()
         elif state == SessionState.PAUSED:
             self._apply_paused_state()
         elif state in (SessionState.IDLE, SessionState.STOPPED):
             self._apply_stopped_state()
+            self.sounds.play_finish()
+
+    def on_duration_mode_change(self, mode_text: str):
+        self.breathing.set_duration_limit(DURATION_PRESETS.get(mode_text, None))
 
     def _apply_running_state(self):
         self.show_finish_button = True
@@ -79,7 +92,6 @@ class MeditationScreen(Screen):
     def on_play_button_press(self, _button):
         if self.session_state in (SessionState.IDLE, SessionState.STOPPED):
             self.breathing.infinity_repeating()
-            self.sounds.play_start()
         elif self.session_state == SessionState.RUNNING:
             self.breathing.pause_breathing()
         elif self.session_state == SessionState.PAUSED:
@@ -87,4 +99,3 @@ class MeditationScreen(Screen):
 
     def on_finish_button_press(self):
         self.breathing.stop_breathing()
-        self.sounds.play_finish()
