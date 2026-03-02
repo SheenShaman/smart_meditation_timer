@@ -7,20 +7,10 @@
         name: "settings"
 
 <MeditationScreen>:
-    # фон экрана
-    canvas.before:
-        Color:
-            rgba: app.theme.background
-        Rectangle:
-            pos: self.pos
-            size: self.size
-
-    BoxLayout:
-        orientation: "vertical"
-        padding: 20
-        spacing: 20
     FloatLayout:
         canvas.before:
+            Color:
+                rgba: app.theme.background
             Rectangle:
                 pos: self.pos
                 size: self.size
@@ -37,29 +27,44 @@
             text: "МЕДИТАЦИЯ"
             font_size: 32
             color: app.theme.primary
+            size_hint: 1, None
+            height: "40dp"
+            pos_hint: {"center_x": 0.5, "center_y": 0.75}
+
+        Button:
+            id: play_btn
+            text: "Начать"
+            size_hint: 0.8, None
+            height: "48dp"
+            pos_hint: {"center_x": 0.5, "center_y": 0.30}
+            on_press: root.on_play_button_press(self)
+
+        Button:
+            id: finish_btn
+            text: "Закончить"
+            size_hint: 0.8, None
+            height: "48dp"
+            pos_hint: {"center_x": 0.5, "center_y": 0.20}
+            opacity: 1 if root.show_finish_button else 0
+            disabled: not root.show_finish_button
+            on_press: root.on_finish_button_press()
 
         Button:
             text: "Статистика"
+            size_hint: 0.4, None
+            height: "44dp"
+            pos_hint: {"x": 0.05, "y": 0.03}
             background_normal: ""
             background_color: app.theme.primary
             color: app.theme.text
-            height: 50
             on_press: app.root.switch("stats")
 
         Button:
             text: "Настройки"
+            size_hint: 0.4, None
+            height: "44dp"
+            pos_hint: {"right": 0.95, "y": 0.03}
             background_normal: ""
             background_color: app.theme.primary
             color: app.theme.text
-            height: 50
             on_press: app.root.switch("settings")
-            size_hint: 1, None
-            height: "40dp"
-            pos_hint: {"center_x": .5, "center_y": .75}
-
-        Button:
-            text: "Начать"
-            size_hint: .8, None
-            height: "48dp"
-            pos_hint: {"center_x": .5, "center_y": 0.3}
-            on_press: root.on_play_button_press(self)

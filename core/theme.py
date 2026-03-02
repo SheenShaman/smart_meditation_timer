@@ -2,15 +2,6 @@ from kivy.event import EventDispatcher
 from kivy.properties import ColorProperty
 from kivy.utils import get_color_from_hex
 
-<<<<<<< HEAD
-=======
-
-class Theme:
-    PRIMARY = "#667eea"
-    ACCENT = "#764ba2"
-    BACKGROUND = "#1a1a2e"
-    LIGHT = "#e94560"
->>>>>>> d874412 (added animation circle)
 
 class Theme(EventDispatcher):
     background = ColorProperty(get_color_from_hex("#1a1a2e"))

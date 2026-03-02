@@ -47,10 +47,7 @@ class MeditationScreen(Screen):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-<<<<<<< HEAD
-=======
         self.sounds = Sounds()
->>>>>>> d874412 (added animation circle)
         self.breathing = BreathingController(
             on_phase_change=self._on_phase_change,
             on_state_change=self._on_state_change,
