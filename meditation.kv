@@ -23,12 +23,19 @@
             pos_hint: {"center_x": 0.5, "center_y": 0.55}
 
         Label:
-            id: breathing_label
             text: "МЕДИТАЦИЯ"
             font_size: 32
             color: app.theme.primary
             size_hint: 1, None
             height: "40dp"
+            pos_hint: {"center_x": 0.5, "center_y": 0.85}
+
+        Label:
+            id: timer_label
+            text: "00:00"
+            font_size: 24
+            size_hint: 1, None
+            height: "32dp"
             pos_hint: {"center_x": 0.5, "center_y": 0.75}
 
         Button:
@@ -36,6 +43,9 @@
             text: "Начать"
             size_hint: 0.8, None
             height: "48dp"
+            background_normal: ""
+            background_color: app.theme.primary
+            color: app.theme.text
             pos_hint: {"center_x": 0.5, "center_y": 0.30}
             on_press: root.on_play_button_press(self)
 
@@ -44,6 +54,9 @@
             text: "Закончить"
             size_hint: 0.8, None
             height: "48dp"
+            background_normal: ""
+            background_color: app.theme.primary
+            color: app.theme.text
             pos_hint: {"center_x": 0.5, "center_y": 0.20}
             opacity: 1 if root.show_finish_button else 0
             disabled: not root.show_finish_button
