@@ -9,3 +9,7 @@ class Theme(EventDispatcher):
     accent = ColorProperty(get_color_from_hex("#764ba2"))
     light = ColorProperty(get_color_from_hex("#e94560"))
     text = ColorProperty((1, 1, 1, 1))
+
+    action_primary = ColorProperty(get_color_from_hex("#2563EB"))
+    action_finish = ColorProperty(get_color_from_hex("#2E7D32"))
+    action_danger = ColorProperty(get_color_from_hex("#C62828"))
