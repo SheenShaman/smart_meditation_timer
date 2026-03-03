@@ -6,12 +6,16 @@ from kivy.uix.screenmanager import ScreenManager
 
 from core.theme import Theme
 from screens import MeditationScreen, SettingsScreen, StatsScreen
+from widgets import AnimatedCircle
 
 Config.set("kivy", "log_level", "debug")
+Config.set("graphics", "multisamples", "8")
+Config.set("input", "mouse", "mouse,disable_multitouch")
 
 Factory.register("MeditationScreen", cls=MeditationScreen)
 Factory.register("StatsScreen", cls=StatsScreen)
 Factory.register("SettingsScreen", cls=SettingsScreen)
+Factory.register("AnimatedCircle", cls=AnimatedCircle)
 
 
 class RootManager(ScreenManager):
