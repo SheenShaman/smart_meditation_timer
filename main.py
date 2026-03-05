@@ -1,42 +1,51 @@
 from kivy.app import App
 from kivy.config import Config
 from kivy.factory import Factory
-from kivy.lang import Builder
+from kivy.properties import StringProperty
 from kivy.uix.screenmanager import ScreenManager
 
-from screens import MeditationScreen, SettingsScreen, StatsScreen
 from core.theme import Theme
+from screens import MeditationScreen, SettingsScreen, StatsScreen
+from widgets import AnimatedCircle
 
 Config.set("kivy", "log_level", "debug")
+Config.set("graphics", "multisamples", "8")
+Config.set("input", "mouse", "mouse,disable_multitouch")
 
 Factory.register("MeditationScreen", cls=MeditationScreen)
 Factory.register("StatsScreen", cls=StatsScreen)
 Factory.register("SettingsScreen", cls=SettingsScreen)
+Factory.register("AnimatedCircle", cls=AnimatedCircle)
 
 
 class RootManager(ScreenManager):
-    pass
+    """
+    Менеджер экранов, отвечает за навигацию
+    """
+
+    current_screen_name = StringProperty("meditation")
+
+    def switch(self, screen_name: str):
+        if screen_name in self.screen_names:
+            self.current = screen_name
+            self.current_screen_name = screen_name
 
 
 class MeditationApp(App):
     """
     Meditation App
     """
+
     theme = Theme()
 
     def build_config(self, config):
-        config.setdefaults('graphics', {
-            'width': '400',
-            'height': '600',
-            'maxfps': '60',
-            'resizable': '0'
-        })
+        config.setdefaults(
+            "graphics",
+            {"width": "400", "height": "600", "maxfps": "60", "resizable": "0"},
+        )
 
     def build(self):
-        root = Builder.load_file("meditation.kv")
-        print("SCREENS:", [s.name for s in root.screens])
-        root.current = "stats"
-        return root
+        return RootManager()
 
 
 if __name__ == "__main__":
