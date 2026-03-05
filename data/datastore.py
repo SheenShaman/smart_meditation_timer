@@ -94,12 +94,3 @@ class DataStore:
         return data
 
 
-store = DataStore("test.json")
-data = store.load()
-data = store.new_session(data)
-
-print(f"Всего сессий: {len(data['sessions'])}")
-print(f"Всего минут: {data['stats']['total_minutes']}")
-
-with open("test.json", 'r', encoding='utf-8') as f:
-    print(json.dumps(json.load(f), indent=2, ensure_ascii=False))
