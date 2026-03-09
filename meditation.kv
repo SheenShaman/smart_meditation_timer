@@ -161,12 +161,50 @@ RootManager:
                 color: app.theme.text
                 on_press: app.root.switch("stats")
 
+                background_normal: ""
+                background_down: ""
+                background_color: 0, 0, 0, 0
+                color: app.theme.text
+
+                canvas.before:
+                    Color:
+                        rgba: app.theme.glass_primary
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [14, 14, 14, 14]
+
+                    Color:
+                        rgba: app.theme.glass_border
+                    Line:
+                        rounded_rectangle: (self.x, self.y, self.width, self.height, 14)
+                        width: 1.1
+
             Button:
                 text: "Настройки"
                 background_normal: ""
                 background_color: app.theme.primary
                 color: app.theme.text
                 on_press: app.root.switch("settings")
+
+                background_normal: ""
+                background_down: ""
+                background_color: 0, 0, 0, 0
+                color: app.theme.text
+
+                canvas.before:
+                    Color:
+                        rgba: app.theme.glass_primary
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [14, 14, 14, 14]
+
+                    Color:
+                        rgba: app.theme.glass_border
+                    Line:
+                        rounded_rectangle: (self.x, self.y, self.width, self.height, 14)
+                        width: 1.1
 
 <FinishPopup@Popup>:
     title: ""
@@ -245,15 +283,235 @@ RootManager:
 
 <StatsScreen>:
     FloatLayout:
+        canvas.before:
+            Color:
+                rgba: app.theme.background
+            Rectangle:
+                pos: self.pos
+                size: self.size
+                source: "assets/bg_gradient_dark.jpg"
+     
+        Label:
+            text: "СТАТИСТИКА"
+            font_size: 32
+            color: app.theme.primary
+            size_hint_y: None
+            height: "42dp"
+            pos_hint: {"center_x": 0.5, "top": 0.95}
+
+        Spinner:
+            id: month_spinner
+            text: root.selected_month
+            values: ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"]
+            size_hint: None, None
+            size: "170dp", "44dp"
+            pos_hint: {"x": 0.08, "top": 0.88}
+            background_normal: ""
+            background_down: ""
+            background_color: 0, 0, 0, 0
+            color: app.theme.text
+            on_text: root.on_month_selected(self.text)
+
+            canvas.before:
+                Color:
+                    rgba: app.theme.glass_primary
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [16, 16, 16, 16]
+
+                Color:
+                    rgba: app.theme.glass_border
+                Line:
+                    rounded_rectangle: (self.x, self.y, self.width, self.height, 16)
+                    width: 1.1
+
         PieChartMonth:
             id: pie_chart
             size_hint: None, None
             size: "300dp", "300dp"
-            pos_hint: {"center_x": 0.5, "center_y": 0.6}
+            pos_hint: {"center_x": 0.5, "center_y": 0.63}
 
+        # контейнер легенды
+        BoxLayout:
+            id: legend_container
+            orientation: "vertical"
+            spacing: "12dp"
+            size_hint: None, None
+            size: "180dp", "120dp"
+            pos_hint: {"x": 0.68, "center_y": 0.63}
+
+            BoxLayout:
+                id: legend_items
+                orientation: "vertical"
+                spacing: "12dp"
+                size_hint_x: None
+                size_hint_y: None
+                height: "300dp"
+                width: "180dp"
+                padding: 0, "90dp", 0, 0
+
+                # синяя медитация // Быстрая
+                BoxLayout:
+                    id: blue_meditation_item
+                    spacing: "6dp"
+                    size_hint_y: None
+                    height: "28dp"
+
+                    Widget:
+                        size_hint: None, None
+                        size: "16dp", "16dp"
+                        canvas:
+                            Color:
+                                rgba: 0.40, 0.46, 0.92, 1
+                            Rectangle:
+                                pos: self.pos
+                                size: self.size
+
+                    Label:
+                        text: "Быстрая"
+                        color: app.theme.text
+                        halign: "left"
+                        valign: "middle"
+                        text_size: self.size
+
+                # фиолетовая медитация // Короткая
+                BoxLayout:
+                    id: purple_meditation_item
+                    spacing: "6dp"
+                    size_hint_y: None
+                    height: "28dp"
+
+                    Widget:
+                        size_hint: None, None
+                        size: "16dp", "16dp"
+                        canvas:
+                            Color:
+                                rgba: 0.46, 0.30, 0.73, 1
+                            Rectangle:
+                                pos: self.pos
+                                size: self.size
+
+                    Label:
+                        text: "Короткая"
+                        color: app.theme.text
+                        halign: "left"
+                        valign: "middle"
+                        text_size: self.size
+
+                # розовая медитация // Глубокая
+                BoxLayout:
+                    id: pink_meditation_item
+                    spacing: "6dp"
+                    size_hint_y: None
+                    height: "28dp"
+
+                    Widget:
+                        size_hint: None, None
+                        size: "16dp", "16dp"
+                        canvas:
+                            Color:
+                                rgba: 0.91, 0.33, 0.38, 1
+                            Rectangle:
+                                pos: self.pos
+                                size: self.size
+
+                    Label:
+                        text: "Глубокая"
+                        color: app.theme.text
+                        halign: "left"
+                        valign: "middle"
+                        text_size: self.size
+
+        # дни недели
+        BoxLayout:
+            id: weekdays_row
+            orientation: "horizontal"
+            size_hint: 0.9, None
+            height: "30dp"
+            pos_hint: {"center_x": 0.5, "y": 0.32}
+            spacing: "8dp"
+
+            Label:
+                text: "ПН"
+
+            Label:
+                text: "ВТ"
+
+            Label:
+                text: "СР"
+
+            Label:
+                text: "ЧТ"
+
+            Label:
+                text: "ПТ"
+
+            Label:
+                text: "СБ"
+
+            Label:
+                text: "ВС"
+
+        # значения по дням
+        BoxLayout:
+            id: week_values_row
+            orientation: "horizontal"
+            size_hint: 0.9, None
+            height: "30dp"
+            pos_hint: {"center_x": 0.5, "y": 0.27}
+            spacing: "8dp"
+
+            Label:
+                text: "5"
+
+            Label:
+                text: "12"
+
+            Label:
+                text: "8"
+
+            Label:
+                text: "15"
+
+            Label:
+                text: "20"
+
+            Label:
+                text: "18"
+
+            Label:
+                text: "25"
+
+        Label:
+            text: "Общее время: 2 ч 35 мин"
+            font_size: "18sp"
+            color: app.theme.text
+            size_hint_y: None
+            height: "30dp"
+            pos_hint: {"center_x": 0.5, "y": 0.18}
+            
         Button:
             text: "Назад"
-            size_hint: None, None
-            size: "140dp", "44dp"
+            size_hint_y: None
+            height: "48dp"
+            size_hint_x: 0.8
             pos_hint: {"center_x": 0.5, "y": 0.05}
+            background_normal: ""
+            background_down: ""
+            background_color: 0, 0, 0, 0
+            color: app.theme.text
             on_press: app.root.switch("meditation")
+
+            canvas.before: 
+                Color:
+                    rgba: app.theme.glass_primary
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [14, 14, 14, 14]
+                Color:
+                    rgba: app.theme.glass_border
+                Line:
+                    rounded_rectangle: (self.x, self.y, self.width, self.height, 14)
+                    width: 1.1
