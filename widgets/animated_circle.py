@@ -88,13 +88,16 @@ class AnimatedCircle(Widget):
 
 class PieChartMonth(Widget):
     """
-    Круг = 31 день выбранного месяца
-    31 равный сектор = 31 день
-    Цвет сектора = тип медитации за этот день:
-      0 - нет
-      1 - синяя
-      2 - фиолетовая
-      3 - розовая
+    Круговая диаграмма по типам медитации за месяц.
+
+    data = список дней месяца:
+    0 - нет
+    1 - синяя / быстрая
+    2 - фиолетовая / короткая
+    3 - розовая / глубокая
+
+    Диаграмма суммирует количество каждого типа
+    и рисует 3 итоговых сектора.
     """
 
     data = ListProperty([])
@@ -103,18 +106,14 @@ class PieChartMonth(Widget):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        self.data = [0] * 31
+        self.data = []
         self._segment_colors = []
         self._segments = []
         self._scheduled = False
 
-        if self.canvas is None:
-            return
-
-        # ВАЖНО: это ДОЛЖНО быть внутри __init__ (поэтому self доступен)
         with self.canvas.before:
-            for _ in range(31):
-                c = Color(0.10, 0.10, 0.13, 0.25)
+            for _ in range(3):
+                c = Color(0, 0, 0, 0)
                 e = Ellipse()
                 self._segment_colors.append(c)
                 self._segments.append(e)
@@ -130,10 +129,7 @@ class PieChartMonth(Widget):
         Clock.schedule_once(lambda *_: self._start_appear(), 0)
 
     def set_data(self, days):
-        days = list(days)[:31]
-        if len(days) < 31:
-            days += [0] * (31 - len(days))
-        self.data = days
+        self.data = list(days)
         self._start_appear()
         self._schedule_redraw()
 
@@ -167,45 +163,60 @@ class PieChartMonth(Widget):
         if self.width <= 0 or self.height <= 0:
             return
 
-        days = list(self.data)[:31]
-        if len(days) < 31:
-            days += [0] * (31 - len(days))
+        days = list(self.data)
+        if not days:
+            return
+
+        fast_count = sum(1 for day in days if day == 1)
+        short_count = sum(1 for day in days if day == 2)
+        deep_count = sum(1 for day in days if day == 3)
+
+        total_count = fast_count + short_count + deep_count
+        if total_count == 0:
+            for idx in range(3):
+                self._segment_colors[idx].rgba = (0, 0, 0, 0)
+                self._segments[idx].angle_start = 0
+                self._segments[idx].angle_end = 0
+                self._segments[idx].pos = pos
+                self._segments[idx].size = (diameter, diameter)
+            return
 
         radius = 0.42 * min(self.width, self.height)
         diameter = radius * 2
         pos = (self.center_x - radius, self.center_y - radius)
 
-        sector = 360.0 / 31.0
+        parts = [
+            (fast_count, self._color_for_type(1)),
+            (short_count, self._color_for_type(2)),
+            (deep_count, self._color_for_type(3)),
+        ]
 
         max_angle = 360.0 * float(self.appear)
-        drawn = 0.0
+        start_angle = 0.0
 
-        start = 0.0
-        i = -1
-
-        for idx in range(31):
-            remaining = max_angle - drawn
-            if remaining <= 0:
-                break
-
-            sweep = min(sector, remaining)
-            drawn += sweep
-
-            r, g, b, a = self._color_for_type(int(days[idx]))
-            self._segment_colors[idx].rgba = (r, g, b, a)
-
+        for idx in range(3):
+            self._segment_colors[idx].rgba = (0, 0, 0, 0)
+            self._segments[idx].angle_start = 0
+            self._segments[idx].angle_end = 0
             self._segments[idx].pos = pos
             self._segments[idx].size = (diameter, diameter)
-            self._segments[idx].angle_start = start
-            self._segments[idx].angle_end = start + sweep
 
-            start += sector
-            i = idx
+        for idx, (value, color) in enumerate(parts):
+            if value <= 0:
+                self._segment_colors[idx].rgba = (0, 0, 0, 0)
+                self._segments[idx].angle_start = 0
+                self._segments[idx].angle_end = 0
+                self._segments[idx].pos = pos
+                self._segments[idx].size = (diameter, diameter)
+                continue
 
-        # остальные спрячем
-        for j in range(i + 1, 31):
-            self._segment_colors[j].rgba = (0, 0, 0, 0)
-            self._segments[j].angle_start = 0
-            self._segments[j].angle_end = 0
-            self._segments[j].pos = pos
-            self._segments[j].size = (diameter, diameter)
+            full_sweep = 360.0 * value / total_count
+            visible_sweep = min(full_sweep, max(0.0, max_angle - start_angle))
+
+            self._segment_colors[idx].rgba = color
+            self._segments[idx].pos = pos
+            self._segments[idx].size = (diameter, diameter)
+            self._segments[idx].angle_start = start_angle
+            self._segments[idx].angle_end = start_angle + visible_sweep
+
+            start_angle += full_sweep
