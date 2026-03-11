@@ -6,7 +6,7 @@ from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import Screen
 
-from app.meditation.controller import BreathingController
+from app.meditation.controller import BreathingController, Meditation
 from app.meditation.states import BreathPhase, SessionState
 from services.sounds import Sounds
 
@@ -26,17 +26,36 @@ class MeditationScreen(Screen):
         super().__init__(**kwargs)
         self.session_state = SessionState.IDLE
         self.sounds = Sounds()
+        self._selected_duration_sec = None
         self.breathing = BreathingController(
             on_phase_change=self._on_phase_change,
             on_state_change=self._on_state_change,
             on_timer_tick=self._on_timer_tick,
         )
+        self.meditation = Meditation(
+            breathing=self.breathing,
+            on_countdown=self._on_countdown,
+        )
 
     def _on_timer_tick(self, total_sec: int):
+        # тик низкоуровневого таймера дыхания
+        # обновляем обратный отсчёт (если есть лимит)
+        self.meditation.update_countdown()
+
+        # если лимита нет (режим "Свободная") — показываем прошедшее время
+        if self.meditation.get_countdown() is None:
+            label = self.ids.get("timer_label")
+            if not label:
+                return
+            mm, ss = divmod(total_sec, 60)
+            label.text = f"{mm:02d}:{ss:02d}"
+
+    def _on_countdown(self, remaining_sec: int):
+        """Обновление лейбла таймера при обратном отсчёте."""
         label = self.ids.get("timer_label")
         if not label:
             return
-        mm, ss = divmod(total_sec, 60)
+        mm, ss = divmod(remaining_sec, 60)
         label.text = f"{mm:02d}:{ss:02d}"
 
     def _on_phase_change(self, phase: BreathPhase, duration: float):
@@ -62,7 +81,9 @@ class MeditationScreen(Screen):
             self.sounds.play_finish()
 
     def on_duration_mode_change(self, mode_text: str):
-        self.breathing.set_duration_limit(DURATION_PRESETS.get(mode_text, None))
+        self._selected_duration_sec = DURATION_PRESETS.get(mode_text, None)
+        # заодно передаём лимит и в дыхательный контроллер
+        self.breathing.set_duration_limit(self._selected_duration_sec)
 
     def _apply_running_state(self):
         self.show_finish_button = True
@@ -100,11 +121,15 @@ class MeditationScreen(Screen):
 
     def on_play_button_press(self, _button):
         if self.session_state in (SessionState.IDLE, SessionState.STOPPED):
-            self.breathing.infinity_repeating()
+            # запускаем медитацию через высокоуровневый контроллер
+            self.meditation.start(self._selected_duration_sec)
         elif self.session_state == SessionState.RUNNING:
-            self.breathing.pause_breathing()
+            # ставим на паузу
+            self.meditation.pause()
         elif self.session_state == SessionState.PAUSED:
+            # продолжаем дыхание напрямую (возобновление сессии)
             self.breathing.resume_breathing()
 
     def on_finish_button_press(self):
-        self.breathing.stop_breathing()
+        # завершение медитации и сохранение сессии
+        self.meditation.finish()
