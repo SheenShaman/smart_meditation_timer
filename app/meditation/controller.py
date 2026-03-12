@@ -1,8 +1,10 @@
 import time
+from typing import Callable, Optional
 
 from kivy.clock import Clock
 
 from app.meditation.states import BreathPhase, SessionState
+from core.storage import load_data_file, save_data_file
 
 
 class BreathingController:
@@ -75,6 +77,16 @@ class BreathingController:
             return
 
         self._on_timer_tick(int(total))
+
+    def get_elapsed_seconds(self) -> int:
+        """
+        Возвращает общее прошедшее время сессии в секундах
+        (с учётом пауз).
+        """
+        total = self._elapsed_before_pause
+        if self._running and self._session_started_at > 0:
+            total += time.monotonic() - self._session_started_at
+        return int(total)
 
     def set_duration_limit(self, limit_sec: int | None):
         self._duration_limit_sec = limit_sec
@@ -179,3 +191,114 @@ class BreathingController:
         if self._on_state_change:
             self._on_state_change(SessionState.RUNNING)
         self.inhale()  # начинаем с вдоха
+
+
+class Meditation:
+    """
+    Высокоуровневый контроллер медитации.
+
+    Внутри использует `BreathingController`:
+    - следит за временем сессии;
+    - предоставляет обратный отсчёт;
+    - управляет старт/пауза/завершение;
+    - сохраняет результат сессии.
+    """
+
+    def __init__(
+        self,
+        breathing: BreathingController,
+        on_countdown: Optional[Callable[[int], None]] = None,
+        on_session_saved: Optional[Callable[[dict], None]] = None,
+    ):
+        self._breathing = breathing
+        self._on_countdown = on_countdown
+        self._on_session_saved = on_session_saved
+        self._target_duration_sec: Optional[int] = None
+        self._state: SessionState = SessionState.IDLE
+
+    # 1) ОБРАТНЫЙ ОТСЧЁТ
+    def get_countdown(self) -> Optional[int]:
+        """
+        Возвращает оставшееся время в секундах
+        (если лимит не задан, вернёт None).
+        """
+        if self._target_duration_sec is None:
+            return None
+        elapsed = self._breathing.get_elapsed_seconds()
+        return max(0, self._target_duration_sec - elapsed)
+
+    def update_countdown(self):
+        """
+        Вызывает callback `on_countdown` с текущим оставшимся временем.
+        Предполагается вызывать из обработчика тика таймера.
+        """
+        if not self._on_countdown:
+            return
+        remaining = self.get_countdown()
+        if remaining is not None:
+            self._on_countdown(remaining)
+
+    # 2) СТАРТ
+    def start(self, duration_limit_sec: Optional[int] = None):
+        """
+        Запускает медитацию:
+        - запоминает целевую длительность (для обратного отсчёта);
+        - настраивает лимит в `BreathingController`;
+        - запускает дыхание.
+        """
+        self._target_duration_sec = duration_limit_sec
+        self._breathing.set_duration_limit(duration_limit_sec)
+        self._state = SessionState.RUNNING
+        self._breathing.infinity_repeating()
+
+    # 3) ПАУЗА
+    def pause(self):
+        """Ставит медитацию на паузу."""
+        if self._state != SessionState.RUNNING:
+            return
+        self._breathing.pause_breathing()
+        self._state = SessionState.PAUSED
+
+    # 4) ЗАВЕРШЕНИЕ
+    def finish(self):
+        """
+        Останавливает медитацию и сохраняет результат.
+        """
+        if self._state in (SessionState.IDLE, SessionState.STOPPED):
+            return
+
+        self._breathing.stop_breathing()
+        duration_sec = self._breathing.get_elapsed_seconds()
+        self._state = SessionState.STOPPED
+        self.save_session(duration_sec)
+
+    # 5) СВЯЗКА ТАЙМЕР + ДЫХАНИЕ реализована через `BreathingController`,
+    #    а этот класс добавляет поверх логику сессии и отслеживание времени.
+
+    # 6) СОХРАНЕНИЕ СЕССИИ
+    def save_session(self, duration_sec: int):
+        """
+        Сохраняет сессию в хранилище:
+        - добавляет запись в `sessions`;
+        - обновляет суммарные минуты в `stats.total_minutes`.
+        """
+        data = load_data_file()
+
+        sessions = data.get("sessions", [])
+        session = {
+            "duration_sec": duration_sec,
+            "timestamp": int(time.time()),
+        }
+        sessions.append(session)
+        data["sessions"] = sessions
+
+        stats = data.get("stats", {})
+        total_minutes = stats.get("total_minutes", 0)
+        stats["total_minutes"] = total_minutes + duration_sec // 60
+        data["stats"] = stats
+
+        save_data_file(data)
+
+        if self._on_session_saved:
+            self._on_session_saved(session)
+
