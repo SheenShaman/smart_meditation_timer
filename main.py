@@ -1,20 +1,19 @@
 from kivy.app import App
 from kivy.config import Config
 from kivy.factory import Factory
-from kivy.properties import StringProperty
+from kivy.properties import StringProperty, BooleanProperty
 from kivy.uix.screenmanager import ScreenManager
+from kivy.lang import Builder
 
 from core.theme import Theme
-from screens import MeditationScreen, SettingsScreen, StatsScreen
+from screens import BaseScreen, MeditationScreen, SettingsScreen, StatsScreen  # noqa
 from widgets import AnimatedCircle
+from services.sounds import Sounds
 
 Config.set("kivy", "log_level", "debug")
 Config.set("graphics", "multisamples", "8")
 Config.set("input", "mouse", "mouse,disable_multitouch")
 
-Factory.register("MeditationScreen", cls=MeditationScreen)
-Factory.register("StatsScreen", cls=StatsScreen)
-Factory.register("SettingsScreen", cls=SettingsScreen)
 Factory.register("AnimatedCircle", cls=AnimatedCircle)
 
 
@@ -36,7 +35,7 @@ class MeditationApp(App):
     Meditation App
     """
 
-    theme = Theme()
+    sounds_enabled = BooleanProperty(True)
 
     def build_config(self, config):
         config.setdefaults(
@@ -45,6 +44,9 @@ class MeditationApp(App):
         )
 
     def build(self):
+        self.sounds = Sounds()
+        self.theme = Theme()
+        Builder.load_file("ui/root.kv")
         return RootManager()
 
 

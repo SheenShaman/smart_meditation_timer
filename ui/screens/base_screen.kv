@@ -1,0 +1,8 @@
+<BaseScreen>
+    canvas.before:
+        Color:
+            rgba: app.theme.background
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: "assets/bg_gradient_dark.jpg" if app.theme.mode == "dark" else "assets/bg_gradient_light.jpg"

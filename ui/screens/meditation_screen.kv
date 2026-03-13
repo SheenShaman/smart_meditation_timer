@@ -1,0 +1,99 @@
+#:import dp kivy.metrics.dp
+
+<MeditationScreen>:
+    FloatLayout:
+        AnimatedCircle:
+            id: circle
+            size_hint: None, None
+            size: dp(220), dp(220)
+            pos_hint: {"center_x": 0.5, "center_y": 0.55}
+
+        BoxLayout:
+            orientation: "vertical"
+            spacing: dp(8)
+            size_hint: 0.9, None
+            height: dp(136)
+            pos_hint: {"center_x": 0.5, "top": 0.98}
+
+            Label:
+                text: "МЕДИТАЦИЯ"
+                font_size: 32
+                color: app.theme.primary
+                size_hint_y: None
+                height: dp(42)
+
+            AnchorLayout:
+                anchor_x: "center"
+                anchor_y: "center"
+                size_hint_y: None
+                height: dp(44)
+                DurationSpinner:
+                    id: duration_spinner
+                    text: "Свободная"
+                    values: root.duration_options
+                    option_cls: "SpinnerOption"
+                    size: dp(180), dp(44)
+                    on_text: root.on_duration_mode_change(self.text); root.sounds.play_click()
+                    on_release: root.sounds.play_click()
+                    canvas.before:
+                        Color:
+                            rgba: app.theme.glass_primary
+                        RoundedRectangle:
+                            pos: self.pos
+                            size: self.size
+                            radius: [14]
+                        Color:
+                            rgba: app.theme.glass_border
+                        Line:
+                            rounded_rectangle: (self.x, self.y, self.width, self.height, 14)
+                            width: 1.1
+                    canvas.after:
+                        Color:
+                            rgba: app.theme.text
+                        Triangle:
+                            points:
+                                [
+                                self.right - dp(18), self.center_y + dp(4),
+                                self.right - dp(8), self.center_y + dp(4),
+                                self.right - dp(13), self.center_y - dp(3)
+                                ]
+            Label:
+                id: timer_label
+                text: "00:00"
+                font_size: 24
+                size_hint_y: None
+                height: dp(32)
+
+        BoxLayout:
+            orientation: "vertical"
+            spacing: dp(10)
+            size_hint: 0.8, None
+            height: dp(106)
+            pos_hint: {"center_x": 0.5, "y": 0.16}
+            GlassButton:
+                id: play_btn
+                text: "Начать"
+                size_hint_y: None
+                height: dp(48)
+                on_press: root.on_play_button_press(self)
+            GlassFinishButton:
+                id: finish_btn
+                text: "Закончить"
+                size_hint_y: None
+                height: dp(48)
+                opacity: 1 if root.show_finish_button else 0
+                disabled: not root.show_finish_button
+                on_press: root.on_finish_button_press()
+
+        BoxLayout:
+            orientation: "horizontal"
+            spacing: dp(12)
+            size_hint: 0.9, None
+            height: dp(44)
+            pos_hint: {"center_x": 0.5, "y": 0.03}
+            GlassButton:
+                text: "Статистика"
+                on_press: app.root.switch("stats")
+            GlassButton:
+                text: "Настройки"
+                on_press: app.root.switch("settings")

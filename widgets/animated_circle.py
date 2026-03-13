@@ -86,6 +86,7 @@ class AnimatedCircle(Widget):
     def _update_label(self, *_):
         self.label.center = self.center
 
+
 class PieChartMonth(Widget):
     """
     Круговая диаграмма по типам медитации за месяц.
@@ -155,7 +156,7 @@ class PieChartMonth(Widget):
             return (0.46, 0.30, 0.73, 0.95)  # фиолетовая
         if t == 3:
             return (0.91, 0.33, 0.38, 0.95)  # розовая
-        return (0.10, 0.10, 0.13, 0.25)      # пусто
+        return (0.10, 0.10, 0.13, 0.25)  # пусто
 
     def _redraw(self, *_):
         self._scheduled = False
