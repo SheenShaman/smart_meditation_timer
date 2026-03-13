@@ -1,0 +1,65 @@
+<FinishPopup@Popup>:
+    title: ""
+    background: ""
+    background_color: 0, 0, 0, 0
+    separator_height: 0
+    separator_color: 0, 0, 0, 0
+    overlay_color: 0, 0, 0, 0.9
+    size_hint: None, None
+    size: dp(340), dp(240)
+    auto_dismiss: False
+    pos_hint: {"center_x": 0.5, "center_y": 0.5}
+
+    BoxLayout:
+        orientation: "vertical"
+        spacing: dp(10)
+        padding: dp(16)
+        canvas.before:
+            Color:
+                rgba: (0.08, 0.10, 0.14, 0.92) if app.theme.text[0] > 0.9 else (1, 1, 1, 0.95)
+            RoundedRectangle:
+                pos: self.pos
+                size: self.size
+                radius: [18]
+            Color:
+                rgba: app.theme.glass_border
+            Line:
+                rounded_rectangle: (self.x, self.y, self.width, self.height, 18)
+                width: 1.2
+
+        Label:
+            text: root.title
+            color: app.theme.text
+            font_size: "22sp"
+            font_size: "22sp"
+            size_hint_y: None
+            height: dp(36)
+            halign: "center"
+            valign: "middle"
+            text_size: self.size
+
+        AnchorLayout:
+            anchor_x: "center"
+            anchor_y: "center"
+
+            Button:
+                text: "Ок"
+                size_hint: None, None
+                size: dp(140), dp(44)
+                background_normal: ""
+                background_down: ""
+                background_color: 0, 0, 0, 0
+                color: app.theme.text
+                on_press: root.dismiss()
+                canvas.before:
+                    Color:
+                        rgba: app.theme.glass_finish
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [12]
+                    Color:
+                        rgba: app.theme.glass_border
+                    Line:
+                        rounded_rectangle: (self.x, self.y, self.width, self.height, 12)
+                        width: 1.0
