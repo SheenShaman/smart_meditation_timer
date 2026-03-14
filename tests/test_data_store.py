@@ -42,23 +42,12 @@ class TestsDataStore:
         nonexistent_file = tmp_path / 'no_file.json'
 
         store = DataStore(nonexistent_file)
-        res = store.load()
 
-        expected_default = {
-            "sessions": [],
-            "settings": {
-                "sound": True,
-                "theme": "dark",
-                "weekly_goal": 200
-            },
-            "stats": {
-                "total_minutes": 0
-            }
-        }
+        with pytest.raises(FileNotFoundError) as exc_info:
+            store.load()
 
-        assert res == expected_default
-        captured = capsys.readouterr()
-        assert 'не найден' in captured.out
+        assert str(nonexistent_file) in str(exc_info.value)
+        assert 'не найден' in str(exc_info.value)
 
     def test_save(self, tmp_path):
         """
@@ -85,8 +74,11 @@ class TestsDataStore:
         Тестируем, что выдаст ошибку при ошибке сохранения
         """
         store = DataStore("/nonexistent/folder/file.json")
-        res = store.save({"test": "data"})
-        assert res is False
+
+        with pytest.raises(RuntimeError) as exc_info:
+            store.save({'test': 'data'})
+
+        assert "Ошибка при сохранении данных" in str(exc_info)
 
     def test_new_session_success_with_note(self, tmp_path, monkeypatch):
         """
