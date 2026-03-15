@@ -1,14 +1,9 @@
 from kivy.factory import Factory
 from kivy.properties import BooleanProperty, ListProperty
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.button import Button
-from kivy.uix.label import Label
-from kivy.uix.popup import Popup
-from kivy.uix.screenmanager import Screen
-
 from app.meditation.controller import BreathingController, Meditation
 from app.meditation.states import BreathPhase, SessionState
-from services.sounds import Sounds
+from screens.base_screen import BaseScreen
+from kivy.app import App
 
 DURATION_PRESETS = {
     "10 сек": 10,
@@ -18,14 +13,14 @@ DURATION_PRESETS = {
 }
 
 
-class MeditationScreen(Screen):
+class MeditationScreen(BaseScreen):
     show_finish_button = BooleanProperty(False)
     duration_options = ListProperty(list(DURATION_PRESETS))
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.session_state = SessionState.IDLE
-        self.sounds = Sounds()
+        self.sounds = App.get_running_app().sounds
         self._selected_duration_sec = None
         self.breathing = BreathingController(
             on_phase_change=self._on_phase_change,
@@ -92,7 +87,7 @@ class MeditationScreen(Screen):
             play_btn.text = "Пауза"
 
     def _show_finish_popup(self):
-        Factory.FinishPopup().open()
+        Factory.FinishPopup(title="Отличная работа").open()
 
     def _apply_paused_state(self):
         circle = self.ids.get("circle")

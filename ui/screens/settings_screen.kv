@@ -1,0 +1,102 @@
+#:import dp kivy.metrics.dp
+
+<SettingsScreen>:
+    FloatLayout:
+        Label:
+            text: "НАСТРОЙКИ"
+            font_size: 32
+            color: app.theme.primary
+            size_hint: None, None
+            size: dp(250), dp(42)
+            pos_hint: {"center_x": 0.5, "top": 0.95}
+        GlassButton:
+            id: theme_btn
+            font_size: 22
+            size_hint: None, None
+            size: dp(40), dp(40)
+            pos_hint: {"right": 0.95, "top": 0.95}
+            on_press: root.toggle_theme()
+            canvas.before:
+                PushMatrix
+                Rotate:
+                    angle: root.rotation
+                    origin: self.center
+            canvas.after:
+                PopMatrix
+            Image:
+                source: "assets/moon.png"
+                opacity: 1 if app.theme.mode == "dark" else 0
+                size_hint: None, None
+                size: dp(24), dp(24)
+                center: self.parent.center
+
+            Image:
+                source: "assets/sun.png"
+                opacity: 1 if app.theme.mode == "light" else 0
+                size_hint: None, None
+                size: dp(24), dp(24)
+                center: self.parent.center
+
+        BoxLayout:
+            orientation: "vertical"
+            spacing: dp(10)
+            size_hint: 0.85, None
+            height: dp(120)
+            pos_hint: {"center_x": 0.5, "top": 0.75}
+
+            Label:
+                text: "Цель недели"
+                color: app.theme.text
+                size_hint_y: None
+                height: dp(30)
+
+            Label:
+                text: str(root.weekly_goal) + " мин"
+                color: app.theme.text
+                size_hint_y: None
+                height: dp(30)
+
+            Slider:
+                min: 100
+                max: 500
+                step: 50
+                value: root.weekly_goal
+                on_value: root.weekly_goal = int(self.value)
+
+        BoxLayout:
+            size_hint: 0.85, None
+            height: dp(50)
+            pos_hint: {"center_x": 0.5, "top": 0.55}
+
+            Label:
+                text: "Звук"
+                halign: "left"
+                valign: "middle"
+
+            Switch:
+                active: root.sounds
+                on_active: root.sounds = self.active
+
+        BoxLayout:
+            orientation: "vertical"
+            spacing: dp(10)
+            size_hint: 0.85, None
+            height: dp(130)
+            pos_hint: {"center_x": 0.5, "y": 0.15}
+
+            GlassButton:
+                text: "Сохранить"
+                height: dp(48)
+                on_press: root.save_settings()
+
+            GlassButton:
+                text: "Сбросить"
+                height: dp(48)
+                on_press: root.reset_settings()
+
+        GlassButton:
+            text: "Назад"
+            size_hint: 0.85, None
+            height: dp(48)
+            pos_hint: {"center_x": 0.5, "y": 0.05}
+            on_press: app.root.switch("meditation")

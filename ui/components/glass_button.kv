@@ -1,0 +1,24 @@
+<GlassButton@Button>:
+    background_normal: ""
+    background_down: ""
+    background_color: 0,0,0,0
+    color: app.theme.text
+
+    canvas.before:
+        Color:
+            rgba: app.theme.glass_primary
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [14]
+
+        Color:
+            rgba: app.theme.glass_border
+        Line:
+            rounded_rectangle: (self.x,self.y,self.width,self.height,14)
+            width: 1.1
+
+<GlassFinishButton@GlassButton>:
+    canvas.before:
+        Color:
+            rgba: app.theme.glass_finish

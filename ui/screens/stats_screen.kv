@@ -1,0 +1,119 @@
+#:import dp kivy.metrics.dp
+
+<StatsScreen>:
+    FloatLayout:
+        Label:
+            text: "СТАТИСТИКА"
+            font_size: 32
+            color: app.theme.primary
+            size_hint_y: None
+            height: dp(42)
+            pos_hint: {"center_x": 0.5, "top": 0.95}
+
+        DurationSpinner:
+            id: month_spinner
+            text: root.selected_month
+            values: ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"]
+            size_hint: None, None
+            size: dp(170), dp(44)
+            pos_hint: {"x": 0.08, "top": 0.88}
+            on_text: root.on_month_selected(self.text)
+
+            canvas.before:
+                Color:
+                    rgba: app.theme.glass_primary
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [16]
+                Color:
+                    rgba: app.theme.glass_border
+                Line:
+                    rounded_rectangle: (self.x, self.y, self.width, self.height, 16)
+                    width: 1.1
+
+        PieChartMonth:
+            id: pie_chart
+            size_hint: None, None
+            size: dp(300), dp(300)
+            pos_hint: {"center_x": 0.5, "center_y": 0.63}
+
+        # контейнер легенды
+        BoxLayout:
+            id: legend_container
+            orientation: "vertical"
+            spacing: dp(12)
+            size_hint: None, None
+            size: dp(180), dp(120)
+            pos_hint: {"x": 0.68, "center_y": 0.63}
+
+            BoxLayout:
+                orientation: "vertical"
+                spacing: dp(12)
+
+                # синяя медитация // Быстрая
+                LegendItem:
+                    text: "Быстрая"
+                    color_box: 0.40, 0.46, 0.92, 1
+
+                # фиолетовая медитация // Короткая
+                LegendItem:
+                    text: "Короткая"
+                    color_box: 0.46, 0.30, 0.73, 1
+
+                # розовая медитация // Глубокая
+                LegendItem:
+                    text: "Глубокая"
+                    color_box: 0.91, 0.33, 0.38, 1
+
+        # дни недели
+        WeekDaysRow:
+            size_hint: 0.9, None
+            height: dp(30)
+            pos_hint: {"center_x": 0.5, "y": 0.32}
+
+        # значения по дням
+        BoxLayout:
+            id: week_values_row
+            orientation: "horizontal"
+            size_hint: 0.9, None
+            height: dp(30)
+            pos_hint: {"center_x": 0.5, "y": 0.27}
+            spacing: dp(8)
+
+            Label:
+                text: "5"
+
+            Label:
+                text: "12"
+
+            Label:
+                text: "8"
+
+            Label:
+                text: "15"
+
+            Label:
+                text: "20"
+
+            Label:
+                text: "18"
+
+            Label:
+                text: "25"
+
+        Label:
+            text: "Общее время: 2 ч 35 мин"
+            font_size: "18sp"
+            color: app.theme.text
+            size_hint_y: None
+            height: dp(30)
+            pos_hint: {"center_x": 0.5, "y": 0.18}
+
+        GlassButton:
+            text: "Назад"
+            size_hint_y: None
+            height: dp(48)
+            size_hint_x: 0.8
+            pos_hint: {"center_x": 0.5, "y": 0.05}
+            on_press: app.root.switch("meditation")

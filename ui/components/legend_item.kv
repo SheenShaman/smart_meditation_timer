@@ -1,0 +1,24 @@
+<LegendItem@BoxLayout>
+    color_box: 1,1,1,1
+    text: ""
+
+    spacing: dp(6)
+    size_hint_y: None
+    height: dp(28)
+
+    Widget:
+        size_hint: None, None
+        size: dp(16), dp(16)
+        canvas:
+            Color:
+                rgba: root.color_box
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+    Label:
+        text: root.text
+        color: app.theme.text
+        halign: "left"
+        valign: "middle"
+        text_size: self.size

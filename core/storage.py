@@ -6,7 +6,7 @@ DATA_FILE = DATA_DIR / "app_data.json"
 DEFAULT_DATA = {
     "sessions": [],
     "settings": {
-        "sound": True,
+        "sounds": True,
         "theme": "dark",
         "weekly_goal": 200,
     },
