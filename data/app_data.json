@@ -1,11 +1,24 @@
 {
-    "sessions": [],
-    "settings": {
-        "sound": true,
-        "theme": "dark",
-        "weekly_goal": 200
+  "sessions": [
+    {
+      "date": "2024-01-15",
+      "minutes": 30
     },
-    "stats": {
-        "total_minutes": 0
+    {
+      "date": "2024-01-16",
+      "minutes": 20
+    },
+    {
+      "date": "2024-01-17",
+      "minutes": 45
     }
+  ],
+  "settings": {
+    "sound": true,
+    "theme": "dark",
+    "weekly_goal": 200
+  },
+  "stats": {
+    "total_minutes": 95
+  }
 }
