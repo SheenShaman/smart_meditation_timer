@@ -137,7 +137,7 @@ class TestStatistics:
             'Четверг': 0,
             'Пятница': 0,
             'Суббота': 0,
-            'Воскресенье':0
+            'Воскресенье': 0
         }
         result = stats.group_day()
         assert result == expected
