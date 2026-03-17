@@ -19,3 +19,9 @@ exclude = ["venv", ".venv", "__pycache__"]
 [tool.ruff.lint]
 select = ["E", "F", "C", "B", "I"]
 ignore = ["E203"]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+    "pytest-mock>=3.15.1",
+]
