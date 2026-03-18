@@ -81,34 +81,29 @@
             pos_hint: {"center_x": 0.5, "y": 0.27}
             spacing: dp(8)
 
-            Label:
-                text: "5"
-
-            Label:
-                text: "12"
-
-            Label:
-                text: "8"
-
-            Label:
-                text: "15"
-
-            Label:
-                text: "20"
-
-            Label:
-                text: "18"
-
-            Label:
-                text: "25"
-
         Label:
-            text: "Общее время: 2 ч 35 мин"
+            id: best_day_label
             font_size: "18sp"
             color: app.theme.text
             size_hint_y: None
             height: dp(30)
-            pos_hint: {"center_x": 0.5, "y": 0.18}
+            pos_hint: {"center_x": 0.4, "y": 0.20}
+
+        Label:
+            id: best_day_time
+            font_size: "18sp"
+            color: app.theme.text
+            size_hint_y: None
+            height: dp(30)
+            pos_hint: {"center_x": 0.6, "y": 0.20}
+
+        Label:
+            id: total_label
+            font_size: "18sp"
+            color: app.theme.text
+            size_hint_y: None
+            height: dp(30)
+            pos_hint: {"center_x": 0.5, "y": 0.15}
 
         GlassButton:
             text: "Назад"
