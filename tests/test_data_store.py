@@ -2,7 +2,8 @@ import pytest
 import os
 import json
 from datetime import datetime
-from data.datastore import DataStore
+from data.datastore import DataStore, DATA_FILE
+from pathlib import Path
 
 
 class TestsDataStore:
@@ -15,19 +16,21 @@ class TestsDataStore:
         При создании без параметров используется файл по умолчанию
         """
         store = DataStore()
-        assert store.file_name == 'app_data.json'
+        assert store.file_name == DATA_FILE
 
     def test_load(self, tmp_path):
         """
         Проверяем, что прочитали те же данные, что и ввели
         """
-        test_file = tmp_path / 'app_data.json'
+        test_file = tmp_path / "app_data.json"
         test_data = {
-            "sessions": [{"date": "2024-01-01", "minutes": 30, "notes": "тест"}],
+            "sessions": [
+                {"date": "2024-01-01", "minutes": 30, "notes": "тест"}
+            ],
             "settings": {"sound": False, "theme": "light", "weekly_goal": 300},
-            "stats": {"total_minutes": 30}
+            "stats": {"total_minutes": 30},
         }
-        with open(test_file, 'w', encoding='UTF-8') as f:
+        with open(test_file, "w", encoding="UTF-8") as f:
             json.dump(test_data, f, ensure_ascii=False, indent=2)
 
         store = DataStore(test_file)
@@ -39,70 +42,59 @@ class TestsDataStore:
         """
         Проверяем, что при отсутствии файла данные возвращаются по умолчанию
         """
-        nonexistent_file = tmp_path / 'no_file.json'
+        nonexistent_file = tmp_path / "no_file.json"
 
         store = DataStore(nonexistent_file)
 
-        with pytest.raises(FileNotFoundError) as exc_info:
-            store.load()
+        data = store.load()
 
-        assert str(nonexistent_file) in str(exc_info.value)
-        assert 'не найден' in str(exc_info.value)
+        assert data["sessions"] == []
+        assert data["stats"]["total_minutes"] == 0
+        assert "settings" in data
 
     def test_save(self, tmp_path):
         """
         Проверяем, что сох роняемое содержимое сов подает с тем, что хотим сохранить
         """
-        test_file = tmp_path / 'save_test.json'
-        test_data = {
+        test_file = tmp_path / "save_test.json"
+        store = DataStore(test_file)
+        store.data = {
             "sessions": [{"date": "2024-01-01", "minutes": 30}],
             "settings": {"sound": True},
-            "stats": {"total_minutes": 30}
+            "stats": {"total_minutes": 30},
         }
-
-        store = DataStore(test_file)
-        res = store.save(test_data)
-
-        assert res is True
-
-        with open(test_file, 'r', encoding='UTF - 8') as f:
-            save_data = json.load(f)
-        assert save_data == test_data
+        store.save()
+        assert test_file.exists()
+        with open(test_file, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        assert data == store.data
 
     def test_save_error(self, mocker):
         """
         Тестируем, что выдаст ошибку при ошибке сохранения
         """
-        store = DataStore("/nonexistent/folder/file.json")
+        store = DataStore("test.json")
+        store.data = {}
 
-        with pytest.raises(RuntimeError) as exc_info:
-            store.save({'test': 'data'})
+        mocker.patch("builtins.open", side_effect=Exception("fail"))
 
-        assert "Ошибка при сохранении данных" in str(exc_info)
+        with pytest.raises(RuntimeError):
+            store.save()
 
-    def test_new_session_success_with_note(self, tmp_path, monkeypatch):
+    def test_new_session_success(self, tmp_path, monkeypatch):
         """
         Проверяет успешно ли, добавляется сессия с заметкой
         """
-        test_file = tmp_path/'test.json'
-        initial_data = {
-            "sessions": [],
-            "settings": {"sound": True, "theme": "dark", "weekly_goal": 200},
-            "stats": {"total_minutes": 0}
-        }
+        test_file = tmp_path / "test.json"
         store = DataStore(test_file)
-        store.save(initial_data)
 
-        inputs = iter(["30", "тестовая заметка"])
-        monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+        session = store.new_session(minutes=1, session_type=1)
 
-        res = store.new_session(initial_data.copy())
-
-        assert len(res["sessions"]) == 1
-
-        session = res["sessions"][0]
-        assert session["minutes"] == 30
-        assert session["notes"] == "тестовая заметка"
+        assert session["minutes"] == 1
+        assert session["type"] == 1
         assert "date" in session
 
-        assert res["stats"]["total_minutes"] == 30
+        data = store.load()
+
+        assert len(data["sessions"]) == 1
+        assert data["stats"]["total_minutes"] == 1
