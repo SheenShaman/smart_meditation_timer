@@ -6,6 +6,7 @@ from kivy.uix.screenmanager import ScreenManager
 from kivy.lang import Builder
 
 from core.theme import Theme
+from data.datastore import DataStore
 from screens import BaseScreen, MeditationScreen, SettingsScreen, StatsScreen  # noqa
 from widgets import AnimatedCircle
 from services.sounds import Sounds
@@ -43,9 +44,27 @@ class MeditationApp(App):
             {"width": "400", "height": "600", "maxfps": "60", "resizable": "0"},
         )
 
+    def apply_settings(self):
+        settings = self.store.get_settings()
+
+        self.sounds_enabled = settings.get("sounds", True)
+        self.sounds.enabled = self.sounds_enabled
+
+        theme_mode = settings.get("theme", "dark")
+        if theme_mode == "dark":
+            self.theme.set_dark()
+        else:
+            self.theme.set_light()
+
     def build(self):
-        self.sounds = Sounds()
-        self.theme = Theme()
+        self.store = DataStore()
+        self.store.init()
+
+        self.sounds = Sounds(enabled=True)
+        self.theme = Theme(mode="dark")
+
+        self.apply_settings()
+
         Builder.load_file("ui/root.kv")
         return RootManager()
 
