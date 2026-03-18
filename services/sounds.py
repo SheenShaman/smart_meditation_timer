@@ -1,9 +1,9 @@
 from kivy.core.audio import Sound, SoundLoader
-from kivy.app import App
 
 
 class Sounds:
-    def __init__(self):
+    def __init__(self, enabled: bool):
+        self.enabled = enabled
         self.sound_start: Sound | None = SoundLoader.load(
             "assets/sound_start.mp3"
         )
@@ -15,7 +15,7 @@ class Sounds:
         )
 
     def play_start(self):
-        if not App.get_running_app().sounds_enabled:
+        if not self.enabled:
             return
         if self.sound_start is not None:
             self.sound_start.play()
@@ -23,7 +23,7 @@ class Sounds:
             return "Звук не был загружен"
 
     def play_finish(self):
-        if not App.get_running_app().sounds_enabled:
+        if not self.enabled:
             return
         if self.sound_finish is not None:
             self.sound_finish.play()
@@ -31,7 +31,7 @@ class Sounds:
             return "Звук не был загружен"
 
     def play_click(self):
-        if not App.get_running_app().sounds_enabled:
+        if not self.enabled:
             return
         if self.sound_click is not None:
             self.sound_click.play()
