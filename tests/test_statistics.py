@@ -74,7 +74,8 @@ class TestStatistics:
 
     def test_total_minutes(self):
         """
-        Тестирует метод, который высчитывает итого количество минут со всех сессий
+        Тестирует метод,
+        который высчитывает итого количество минут со всех сессий
         """
         stats = Statistics()
         stats.sessions = [{"minutes": 30}, {"minutes": 20}, {"minutes": 45}]

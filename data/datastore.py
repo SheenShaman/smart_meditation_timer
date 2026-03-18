@@ -63,7 +63,8 @@ class DataStore:
 
         except json.JSONDecodeError:
             raise ValueError(
-                f"Ошибка: Файл {self.file_name} поврежден или содержит некорректные данные."
+                f"Ошибка: Файл {self.file_name} "
+                f"поврежден или содержит некорректные данные."
             )
 
         except Exception as error:
@@ -91,7 +92,8 @@ class DataStore:
 
     def new_session(self, minutes: int, session_type: int):
         """
-        Создает новую сессию и выдает ошибку, если введенные данные не число или отрицательное число
+        Создает новую сессию и выдает ошибку,
+        если введенные данные не число или отрицательное число
         """
         if self.data is None:
             self.data = self.load()

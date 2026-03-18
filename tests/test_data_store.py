@@ -53,7 +53,8 @@ class TestsDataStore:
 
     def test_save(self, tmp_path):
         """
-        Проверяем, что сох роняемое содержимое сов подает с тем, что хотим сохранить
+        Проверяем, что сохраняемое содержимое совпадает с тем,
+        что хотим сохранить
         """
         test_file = tmp_path / "save_test.json"
         store = DataStore(test_file)
