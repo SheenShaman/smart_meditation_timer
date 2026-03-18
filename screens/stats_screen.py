@@ -1,11 +1,13 @@
-from kivy.clock import Clock
-from kivy.app import App
-from kivy.uix.label import Label
-from data.statistics import Statistics
-from datetime import datetime
-from screens.base_screen import BaseScreen
-from kivy.properties import DictProperty, StringProperty
 from calendar import monthrange
+from datetime import datetime
+
+from kivy.app import App
+from kivy.clock import Clock
+from kivy.properties import StringProperty
+from kivy.uix.label import Label
+
+from data.statistics import Statistics
+from screens.base_screen import BaseScreen
 
 
 class StatsScreen(BaseScreen):

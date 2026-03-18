@@ -1,8 +1,9 @@
-from screens.base_screen import BaseScreen
-from kivy.properties import BooleanProperty, NumericProperty
-from kivy.app import App
 from kivy.animation import Animation
+from kivy.app import App
 from kivy.factory import Factory
+from kivy.properties import BooleanProperty, NumericProperty
+
+from screens.base_screen import BaseScreen
 
 
 class SettingsScreen(BaseScreen):

@@ -1,7 +1,9 @@
 import json
+
 import pytest
-from data.statistics import Statistics, StatisticsErrors
+
 from data.datastore import DataStore
+from data.statistics import Statistics, StatisticsErrors
 
 
 class TestStatistics:

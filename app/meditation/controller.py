@@ -2,10 +2,10 @@ import math
 import time
 from typing import Callable, Optional
 
+from kivy.app import App
 from kivy.clock import Clock
 
 from app.meditation.states import BreathPhase, SessionState
-from kivy.app import App
 
 
 class BreathingController:

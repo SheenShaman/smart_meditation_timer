@@ -1,9 +1,8 @@
-import pytest
-import os
 import json
-from datetime import datetime
-from data.datastore import DataStore, DATA_FILE
-from pathlib import Path
+
+import pytest
+
+from data.datastore import DATA_FILE, DataStore
 
 
 class TestsDataStore:
