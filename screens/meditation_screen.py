@@ -1,15 +1,16 @@
+from kivy.app import App
 from kivy.factory import Factory
 from kivy.properties import BooleanProperty, ListProperty
+
 from app.meditation.controller import BreathingController, Meditation
 from app.meditation.states import BreathPhase, SessionState
 from screens.base_screen import BaseScreen
-from kivy.app import App
 
 DURATION_PRESETS = {
-    "10 сек": 10,
-    "5 мин": 5 * 60,
-    "10 мин": 10 * 60,
-    "Свободная": None,
+    "10 сек": (10, 1),
+    "5 мин": (5 * 60, 2),
+    "10 мин": (10 * 60, 3),
+    "Свободная": (None, None),
 }
 
 
@@ -19,6 +20,7 @@ class MeditationScreen(BaseScreen):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self._selected_type = 1
         self.session_state = SessionState.IDLE
         self.sounds = App.get_running_app().sounds
         self._selected_duration_sec = None
@@ -76,9 +78,11 @@ class MeditationScreen(BaseScreen):
             self.sounds.play_finish()
 
     def on_duration_mode_change(self, mode_text: str):
-        self._selected_duration_sec = DURATION_PRESETS.get(mode_text, None)
+        duration, m_type = DURATION_PRESETS.get(mode_text, (None, 1))
         # заодно передаём лимит и в дыхательный контроллер
-        self.breathing.set_duration_limit(self._selected_duration_sec)
+        self._selected_duration_sec = duration
+        self._selected_type = m_type
+        self.breathing.set_duration_limit(duration)
 
     def _apply_running_state(self):
         self.show_finish_button = True
@@ -117,7 +121,9 @@ class MeditationScreen(BaseScreen):
     def on_play_button_press(self, _button):
         if self.session_state in (SessionState.IDLE, SessionState.STOPPED):
             # запускаем медитацию через высокоуровневый контроллер
-            self.meditation.start(self._selected_duration_sec)
+            self.meditation.start(
+                self._selected_duration_sec, self._selected_type
+            )
         elif self.session_state == SessionState.RUNNING:
             # ставим на паузу
             self.meditation.pause()

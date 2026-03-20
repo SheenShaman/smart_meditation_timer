@@ -1,10 +1,11 @@
+import math
 import time
 from typing import Callable, Optional
 
+from kivy.app import App
 from kivy.clock import Clock
 
 from app.meditation.states import BreathPhase, SessionState
-from core.storage import load_data_file, save_data_file
 
 
 class BreathingController:
@@ -26,7 +27,6 @@ class BreathingController:
         self._elapsed_before_pause: float = 0.0
         self._timer_event = None
         self._duration_limit_sec: int | None = None
-        self._timer_event = None
         self._last_emitted_sec = -1
         self._stop_requested = False
 
@@ -217,6 +217,7 @@ class Meditation:
         on_countdown: Optional[Callable[[int], None]] = None,
         on_session_saved: Optional[Callable[[dict], None]] = None,
     ):
+        self._session_type = None
         self._breathing = breathing
         self._on_countdown = on_countdown
         self._on_session_saved = on_session_saved
@@ -246,7 +247,9 @@ class Meditation:
             self._on_countdown(remaining)
 
     # 2) СТАРТ
-    def start(self, duration_limit_sec: Optional[int] = None):
+    def start(
+        self, duration_limit_sec: Optional[int] = None, session_type: int = 1
+    ):
         """
         Запускает медитацию:
         - запоминает целевую длительность (для обратного отсчёта);
@@ -254,6 +257,7 @@ class Meditation:
         - запускает дыхание.
         """
         self._target_duration_sec = duration_limit_sec
+        self._session_type = session_type
         self._breathing.set_duration_limit(duration_limit_sec)
         self._state = SessionState.RUNNING
         self._breathing.infinity_repeating()
@@ -289,22 +293,12 @@ class Meditation:
         - добавляет запись в `sessions`;
         - обновляет суммарные минуты в `stats.total_minutes`.
         """
-        data = load_data_file()
+        app = App.get_running_app()
+        store = app.store
+        minutes = max(1, math.ceil(duration_sec / 60))
 
-        sessions = data.get("sessions", [])
-        session = {
-            "duration_sec": duration_sec,
-            "timestamp": int(time.time()),
-        }
-        sessions.append(session)
-        data["sessions"] = sessions
-
-        stats = data.get("stats", {})
-        total_minutes = stats.get("total_minutes", 0)
-        stats["total_minutes"] = total_minutes + duration_sec // 60
-        data["stats"] = stats
-
-        save_data_file(data)
+        session_type = getattr(self, "_session_type", 1)
+        session = store.new_session(minutes, session_type)
 
         if self._on_session_saved:
             self._on_session_saved(session)
