@@ -5,4 +5,4 @@
         Rectangle:
             pos: self.pos
             size: self.size
-            source: "assets/bg_gradient_dark.jpg" if app.theme.mode == "dark" else "assets/bg_gradient_light.jpg"
+            source: app.assets("bg_gradient_dark.jpg") if app.theme.mode == "dark" else app.assets("bg_gradient_light.jpg")

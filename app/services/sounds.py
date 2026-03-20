@@ -1,17 +1,20 @@
 from kivy.core.audio import Sound, SoundLoader
+from kivy.app import App
 
 
 class Sounds:
     def __init__(self, enabled: bool):
         self.enabled = enabled
+        app = App.get_running_app()
+
         self.sound_start: Sound | None = SoundLoader.load(
-            "assets/sound_start.mp3"
+            app.assets("sound_start.mp3")
         )
         self.sound_finish: Sound | None = SoundLoader.load(
-            "assets/sound_finish.wav"
+            app.assets("sound_finish.wav")
         )
         self.sound_click: Sound | None = SoundLoader.load(
-            "assets/sound_click.wav"
+            app.assets("sound_click.wav")
         )
 
     def play_start(self):

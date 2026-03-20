@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from data.datastore import DATA_FILE, DataStore
+from app.data.datastore import DATA_FILE, DataStore
 
 
 class TestsDataStore:

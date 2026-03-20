@@ -5,7 +5,7 @@ from typing import Callable, Optional
 from kivy.app import App
 from kivy.clock import Clock
 
-from app.meditation.states import BreathPhase, SessionState
+from app.states import BreathPhase, SessionState
 
 
 class BreathingController:

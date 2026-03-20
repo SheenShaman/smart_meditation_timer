@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from data.datastore import DataStore
+from app.data.datastore import DataStore
 
 
 class StatisticsErrors(Exception):
@@ -74,7 +74,7 @@ class Statistics:
         """
         has_data = any(minutes > 0 for minutes in weekday_stats.values())
         if not has_data:
-            raise StatisticsErrors("Нет данных")
+            return "—", 0
 
         best_day = max(weekday_stats.items(), key=lambda x: x[1])
         return best_day[0], best_day[1]

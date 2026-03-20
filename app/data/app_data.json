@@ -1,0 +1,92 @@
+{
+  "sessions": [
+    {
+      "date": "2026-01-01",
+      "minutes": 1,
+      "type": 1
+    },
+    {
+      "date": "2026-02-01",
+      "minutes": 1,
+      "type": 1
+    },
+    {
+      "date": "2026-03-01",
+      "minutes": 1,
+      "type": 1
+    },
+    {
+      "date": "2026-03-02",
+      "minutes": 5,
+      "type": 2
+    },
+    {
+      "date": "2026-03-03",
+      "minutes": 10,
+      "type": 3
+    },
+    {
+      "date": "2026-03-04",
+      "minutes": 5,
+      "type": 2
+    },
+    {
+      "date": "2026-04-01",
+      "minutes": 1,
+      "type": 1
+    },
+    {
+      "date": "2026-05-01",
+      "minutes": 11,
+      "type": 3
+    },
+    {
+      "date": "2026-06-02",
+      "minutes": 10,
+      "type": 3
+    },
+    {
+      "date": "2026-07-10",
+      "minutes": 10,
+      "type": 3
+    },
+    {
+      "date": "2026-08-01",
+      "minutes": 5,
+      "type": 2
+    },
+    {
+      "date": "2026-09-01",
+      "minutes": 10,
+      "type": 3
+    },
+    {
+      "date": "2026-10-02",
+      "minutes": 15,
+      "type": 3
+    },
+    {
+      "date": "2026-11-10",
+      "minutes": 10,
+      "type": 3
+    },
+    {
+      "date": "2026-12-01",
+      "minutes": 5,
+      "type": 2
+    },
+    {
+      "date": "2026-03-20",
+      "minutes": 1,
+      "type": 1
+    }
+  ],
+  "settings": {
+    "sounds": true,
+    "theme": "light",
+    "weekly_goal": 200
+  },
+  "stats": {
+    "total_minutes": 101
+  }
+}

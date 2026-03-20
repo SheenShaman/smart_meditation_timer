@@ -24,14 +24,14 @@
             canvas.after:
                 PopMatrix
             Image:
-                source: "assets/moon.png"
+                source: app.assets("moon.png")
                 opacity: 1 if app.theme.mode == "dark" else 0
                 size_hint: None, None
                 size: dp(24), dp(24)
                 center: self.parent.center
 
             Image:
-                source: "assets/sun.png"
+                source: app.assets("sun.png")
                 opacity: 1 if app.theme.mode == "light" else 0
                 size_hint: None, None
                 size: dp(24), dp(24)

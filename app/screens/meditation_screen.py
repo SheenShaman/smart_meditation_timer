@@ -2,9 +2,9 @@ from kivy.app import App
 from kivy.factory import Factory
 from kivy.properties import BooleanProperty, ListProperty
 
-from app.meditation.controller import BreathingController, Meditation
-from app.meditation.states import BreathPhase, SessionState
-from screens.base_screen import BaseScreen
+from app.services.controller import BreathingController, Meditation
+from app.states import BreathPhase, SessionState
+from app.screens.base_screen import BaseScreen
 
 DURATION_PRESETS = {
     "10 сек": (10, 1),

@@ -6,8 +6,8 @@ from kivy.clock import Clock
 from kivy.properties import StringProperty
 from kivy.uix.label import Label
 
-from data.statistics import Statistics
-from screens.base_screen import BaseScreen
+from app.screens.base_screen import BaseScreen
+from app.services.statistics import Statistics
 
 
 class StatsScreen(BaseScreen):
