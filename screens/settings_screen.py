@@ -1,9 +1,9 @@
-from kivy.storage.jsonstore import JsonStore
-from screens.base_screen import BaseScreen
-from kivy.properties import BooleanProperty, StringProperty, NumericProperty
-from kivy.app import App
 from kivy.animation import Animation
+from kivy.app import App
 from kivy.factory import Factory
+from kivy.properties import BooleanProperty, NumericProperty
+
+from screens.base_screen import BaseScreen
 
 
 class SettingsScreen(BaseScreen):
@@ -12,36 +12,24 @@ class SettingsScreen(BaseScreen):
     rotation = NumericProperty(0)
 
     def on_pre_enter(self):
-        if not hasattr(self, "_settings_loaded"):
-            self.load_settings()
-            self._settings_loaded = True
+        self.load_settings()
 
     def load_settings(self):
-        store = JsonStore("app_data.json")
-        if store.exists("settings"):
-            settings = store.get("settings")
+        app = App.get_running_app()
+        settings = app.store.get_settings()
 
-            self.sounds = settings.get("sounds", True)
-            self.weekly_goal = settings.get("weekly_goal", 100)
-
-            theme_mode = settings.get("theme", "dark")
-            app_theme = App.get_running_app().theme
-            if theme_mode == "dark":
-                app_theme.set_dark()
-            else:
-                app_theme.set_light()
+        self.sounds = settings.get("sounds", True)
+        self.weekly_goal = settings.get("weekly_goal", 100)
 
     def save_settings(self):
-        store = JsonStore("app_data.json")
         app = App.get_running_app()
-        store.put(
-            "settings",
-            weekly_goal=self.weekly_goal,
-            sounds=self.sounds,
-            theme=app.theme.mode,
-        )
+        data = app.store.get_data()
 
-        app.sounds_enabled = self.sounds
+        data["settings"]["sounds"] = self.sounds
+        data["settings"]["weekly_goal"] = self.weekly_goal
+        data["settings"]["theme"] = app.theme.mode
+        app.store.save()
+        app.apply_settings()
         Factory.FinishPopup(title="Настройки сохранены").open()
 
     def reset_settings(self):
@@ -49,6 +37,7 @@ class SettingsScreen(BaseScreen):
         self.sounds = True
         theme = App.get_running_app().theme
         theme.set_dark()
+        self.save_settings()
 
     def toggle_theme(self):
         self.rotation += 180

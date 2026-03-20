@@ -1,6 +1,6 @@
-import json
-from data.datastore import DataStore
 from datetime import datetime
+
+from data.datastore import DataStore
 
 
 class StatisticsErrors(Exception):
@@ -12,12 +12,11 @@ class Statistics:
     Класс для подсчета статистики
     """
 
-    def __init__(self, file_name="app_data.json") -> None:
+    def __init__(self) -> None:
         """
         Создает объект статистики
         """
-        self.file_name = file_name  # запоминаем имя файла
-        self.store = DataStore(file_name)  # создаем объект для работы с файлом
+        self.store = DataStore()  # создаем объект для работы с файлом
         self.data = None  # место для данных (пока пусто)
         self.sessions = []  # место для сессий (пока пусто)
 
@@ -26,10 +25,10 @@ class Statistics:
         Загружает данные из файла и проверяет все основные виды исключений
         """
         self.data = self.store.load()
-        self.sessions = self.data.get('sessions', [])
+        self.sessions = self.data.get("sessions", [])
 
         if not self.sessions:
-            raise StatisticsErrors('Загрузите сессию')
+            raise StatisticsErrors("Загрузите сессию")
 
         return True
 
@@ -39,7 +38,7 @@ class Statistics:
         """
         total = 0
         for session in self.sessions:
-            total += session['minutes']
+            total += session["minutes"]
         return total
 
     def group_day(self) -> dict:
@@ -53,7 +52,7 @@ class Statistics:
             3: "Четверг",
             4: "Пятница",
             5: "Суббота",
-            6: "Воскресенье"
+            6: "Воскресенье",
         }
 
         result = {}
@@ -61,12 +60,12 @@ class Statistics:
             result[day] = 0
         for session in self.sessions:
             try:
-                session_date = datetime.strptime(session['date'], "%Y-%m-%d")
+                session_date = datetime.strptime(session["date"], "%Y-%m-%d")
                 weekday_num = session_date.weekday()
                 weekday_name = weekdays[weekday_num]
-                result[weekday_name] += session['minutes']
+                result[weekday_name] += session["minutes"]
             except (KeyError, ValueError) as e:
-                raise ValueError(f'Ошибка в сессии {session}: {e}')
+                raise ValueError(f"Ошибка в сессии {session}: {e}")
         return result
 
     def best_day(self, weekday_stats: dict) -> tuple:
@@ -75,7 +74,7 @@ class Statistics:
         """
         has_data = any(minutes > 0 for minutes in weekday_stats.values())
         if not has_data:
-            raise StatisticsErrors(f'Нет данных')
+            raise StatisticsErrors("Нет данных")
 
         best_day = max(weekday_stats.items(), key=lambda x: x[1])
         return best_day[0], best_day[1]
@@ -102,10 +101,5 @@ class Statistics:
             "sessions_count": len(self.sessions),
             "avg_duration": average_duration,
             "by_weekday": weeks_status,
-            "best_day": {
-                "name": best_day,
-                "minutes": best_minutes
-            }
+            "best_day": {"name": best_day, "minutes": best_minutes},
         }
-
-
